@@ -1,0 +1,10 @@
+{
+  "appTitle": "سكويز ات",
+  "quizTitle": "سكويز ات",
+  "questionText": "السؤال",
+  "questionCount": "السؤال {current}/{total}",
+  "submitAnswer": "تأكيد الاجابة",
+  "quizCompleted": "نهاية الجولة",
+  "score": "{score}/{total} نتيجتك هي  ",
+  "errorLoadingQuestions": "لقد حدث خطأ أو لا توجد أسئلة متاحة. يرجى المحاولة مرة أخرى."
+}

@@ -1,0 +1,10 @@
+{
+  "appTitle": "sQueezIT",
+  "quizTitle": "sQueezIT",
+  "questionText": "Question",
+  "questionCount": "Question {current}/{total}",
+  "submitAnswer": "Submit Answer",
+  "quizCompleted": "Quiz Completed",
+  "score": "Your score is {score}/{total}",
+  "errorLoadingQuestions": "An error occurred or no questions are available. Please try again."
+}
