@@ -51,11 +51,11 @@ class InscriptionPage extends StatelessWidget {
                 onPressed: (){
                   _onInscrire(context);
                 },
-                child: Text('Inscription', style: TextStyle(fontSize: 22),),
+                child: Text('Inscription', style: TextStyle(fontSize: 22, color: Colors.orange),),
               ),
             ),
             TextButton(
-                child : Text("J'ai deja un compte" , style: TextStyle(fontSize: 22)),
+                child : Text("J'ai deja un compte" , style: TextStyle(fontSize: 22, color: Colors.orange)),
                 onPressed: () {
                   Navigator.pop(context);
                   Navigator.pushNamed(context, '/authentification');
