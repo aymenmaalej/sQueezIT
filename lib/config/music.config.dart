@@ -6,35 +6,13 @@ class BackgroundMusic {
 
   static Future<void> playMusic() async {
     await _audioPlayer.setReleaseMode(ReleaseMode.loop);
-    await _audioPlayer.play(AssetSource('music/barima.mp3')).then((_) {
-      _isPlaying = true;
-    }).catchError((error) {
-      print("Error playing audio: $error");
-    });
+    await _audioPlayer.play(AssetSource('audio/beat.mp3'));
+    _isPlaying = true;
   }
 
   static Future<void> stopMusic() async {
-    await _audioPlayer.stop().then((_) {
-      _isPlaying = false;
-    }).catchError((error) {
-      print("Error stopping audio: $error");
-    });
-  }
-
-  static Future<void> pauseMusic() async {
-    await _audioPlayer.pause().then((_) {
-      _isPlaying = false;
-    }).catchError((error) {
-      print("Error pausing audio: $error");
-    });
-  }
-
-  static Future<void> resumeMusic() async {
-    await _audioPlayer.resume().then((_) {
-      _isPlaying = true;
-    }).catchError((error) {
-      print("Error resuming audio: $error");
-    });
+    await _audioPlayer.stop();
+    _isPlaying = false;
   }
 
   static bool isPlaying() {

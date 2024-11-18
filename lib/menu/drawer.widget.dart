@@ -18,7 +18,7 @@ class _MyDrawerState extends State<MyDrawer> {
     final themeProvider = Provider.of<ThemeProvider>(context);
 
     return Drawer(
-      child: ListView(
+      child: Column(
         children: [
           DrawerHeader(
             decoration: const BoxDecoration(
@@ -31,35 +31,40 @@ class _MyDrawerState extends State<MyDrawer> {
               ),
             ),
           ),
-          ...GlobalParams.menus.map((item) {
-            return Column(
-              children: [
-                ListTile(
-                  title: Text(
-                    '${item['title']}',
-                    style: const TextStyle(fontSize: 22),
-                  ),
-                  leading: IconTheme(
-                    data: const IconThemeData(color: Colors.black),
-                    child: item['icon'],
-                  ),
-                  trailing: const Icon(Icons.arrow_right, color: Colors.deepOrange),
-                  onTap: () async {
-                    if ('${item['title']}' != "Déconnexion") {
-                      Navigator.pop(context);
-                      Navigator.pushNamed(context, "${item['route']}");
-                    } else {
-                      final prefs = await SharedPreferences.getInstance();
-                      prefs.setBool("connecte", false);
-                      Navigator.pushNamedAndRemoveUntil(context, '/authentification', (route) => false);
-                    }
-                  },
-                ),
-                const Divider(height: 4, color: Colors.deepOrange),
-              ],
-            );
-          }).toList(),
-          const SizedBox(height: 350),
+          Expanded(
+            child: ListView.builder(
+              itemCount: GlobalParams.menus.length,
+              itemBuilder: (context, index) {
+                final item = GlobalParams.menus[index];
+                return Column(
+                  children: [
+                    ListTile(
+                      title: Text(
+                        '${item['title']}',
+                        style: const TextStyle(fontSize: 22),
+                      ),
+                      leading: IconTheme(
+                        data: const IconThemeData(color: Colors.black),
+                        child: item['icon'],
+                      ),
+                      trailing: const Icon(Icons.arrow_right, color: Colors.deepOrange),
+                      onTap: () async {
+                        if ('${item['title']}' != "Déconnexion") {
+                          Navigator.pop(context);
+                          Navigator.pushNamed(context, "${item['route']}");
+                        } else {
+                          final prefs = await SharedPreferences.getInstance();
+                          prefs.setBool("connecte", false);
+                          Navigator.pushNamedAndRemoveUntil(context, '/authentification', (route) => false);
+                        }
+                      },
+                    ),
+                    const Divider(height: 4, color: Colors.deepOrange),
+                  ],
+                );
+              },
+            ),
+          ),
           ListTile(
             title: const Text('Dark Mode', style: TextStyle(fontSize: 22)),
             leading: Icon(
@@ -75,18 +80,23 @@ class _MyDrawerState extends State<MyDrawer> {
               },
             ),
           ),
-          SwitchListTile(
-            title: Text("Music", style: TextStyle(fontSize: 22)),
-            secondary: Icon(Icons.music_note , color: Colors.black,),
-            value: BackgroundMusic.isPlaying(),
-            onChanged: (value) {
-              if (value) {
-                BackgroundMusic.resumeMusic();
-              } else {
-                BackgroundMusic.pauseMusic();
-              }
-              setState(() {});
-            },
+          ListTile(
+            title: const Text("Music", style: TextStyle(fontSize: 22)),
+            leading: const Icon(Icons.music_note, color: Colors.black),
+            trailing: Switch(
+              value: BackgroundMusic.isPlaying(),
+                onChanged: (value) async {
+                  print("Switch toggled: $value");
+                  if (value) {
+                    await BackgroundMusic.playMusic();
+                    print("Music started");
+                  } else {
+                    await BackgroundMusic.stopMusic();
+                    print("Music stopped");
+                  }
+                  setState(() {});
+                }
+            ),
           ),
         ],
       ),
