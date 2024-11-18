@@ -24,7 +24,14 @@ class MyApp extends StatelessWidget {
     '/inscription': (context) => InscriptionPage(),
     '/authentification': (context) => AuthentificationPage(),
     '/parametres': (context) => ParametresPage(),
-    '/quiz': (context) => QuizPage(parameters: {},),
+    '/quiz': (context) {
+    final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+    if (args != null) {
+      return QuizPage(parameters: args);
+    } else {
+      throw Exception("No arguments provided for QuizPage.");
+    }
+  },
     '/classement' : (context)=> ClassementPage() ,
   };
 
