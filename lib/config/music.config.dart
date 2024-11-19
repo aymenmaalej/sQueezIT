@@ -6,7 +6,7 @@ class BackgroundMusic {
 
   static Future<void> playMusic() async {
     await _audioPlayer.setReleaseMode(ReleaseMode.loop);
-    await _audioPlayer.play(AssetSource('audio/beat.mp3'));
+    await _audioPlayer.play(AssetSource('assets/beat.mp3'));
     _isPlaying = true;
   }
 
