@@ -1,21 +1,30 @@
 import 'package:audioplayers/audioplayers.dart';
 
 class BackgroundMusic {
-  static final AudioPlayer _audioPlayer = AudioPlayer();
-  static bool _isPlaying = false;
+  final AudioPlayer _audioPlayer = AudioPlayer();
+  bool _isMusicPlaying = false;
 
-  static Future<void> playMusic() async {
-    await _audioPlayer.setReleaseMode(ReleaseMode.loop);
-    await _audioPlayer.play(AssetSource('assets/beat.mp3'));
-    _isPlaying = true;
+  Future<void> playMusic(String filePath) async {
+    if (!_isMusicPlaying) {
+      await _audioPlayer.play(AssetSource(filePath));
+      _isMusicPlaying = true;
+    }
   }
 
-  static Future<void> stopMusic() async {
-    await _audioPlayer.stop();
-    _isPlaying = false;
+  Future<void> stopMusic() async {
+    if (_isMusicPlaying) {
+      await _audioPlayer.pause();
+      _isMusicPlaying = false;
+    }
   }
 
-  static bool isPlaying() {
-    return _isPlaying;
+  bool get isMusicPlaying => _isMusicPlaying;
+
+  void toggleMusic(String filePath) async {
+    if (_isMusicPlaying) {
+      await stopMusic();
+    } else {
+      await playMusic(filePath);
+    }
   }
 }

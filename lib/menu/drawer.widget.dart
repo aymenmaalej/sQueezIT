@@ -13,6 +13,15 @@ class MyDrawer extends StatefulWidget {
 }
 
 class _MyDrawerState extends State<MyDrawer> {
+  final BackgroundMusic _backgroundMusic = BackgroundMusic();
+  bool isMusicPlaying = false;
+
+  @override
+  void initState() {
+    super.initState();
+    isMusicPlaying = _backgroundMusic.isMusicPlaying;
+  }
+
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
@@ -80,23 +89,20 @@ class _MyDrawerState extends State<MyDrawer> {
               },
             ),
           ),
-          ListTile(
+          SwitchListTile(
             title: const Text("Music", style: TextStyle(fontSize: 22)),
-            leading: const Icon(Icons.music_note, color: Colors.black),
-            trailing: Switch(
-              value: BackgroundMusic.isPlaying(),
-                onChanged: (value) async {
-                  print("Switch toggled: $value");
-                  if (value) {
-                    await BackgroundMusic.playMusic();
-                    print("Music started");
-                  } else {
-                    await BackgroundMusic.stopMusic();
-                    print("Music stopped");
-                  }
-                  setState(() {});
-                }
-            ),
+            secondary: const Icon(Icons.music_note , color: Colors.black),
+            value: isMusicPlaying,
+            onChanged: (value) async {
+              setState(() {
+                isMusicPlaying = value;
+              });
+              if (isMusicPlaying) {
+                await _backgroundMusic.playMusic('beat.mp3');
+              } else {
+                await _backgroundMusic.stopMusic();
+              }
+            },
           ),
         ],
       ),
