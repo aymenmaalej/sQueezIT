@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -25,7 +26,9 @@ class _MyDrawerState extends State<MyDrawer> {
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
-
+    final user = FirebaseAuth.instance.currentUser;
+    String email = user?.email ?? ""; 
+    String username = email.split('@')[0].toUpperCase();
     return Drawer(
       child: Column(
         children: [
@@ -40,6 +43,10 @@ class _MyDrawerState extends State<MyDrawer> {
               ),
             ),
           ),
+          Container(
+                      padding: EdgeInsets.all(10),
+                      child: Text("Hello! ${username}", style: TextStyle(fontSize: 22)),
+                    ),
           Expanded(
             child: ListView.builder(
               itemCount: GlobalParams.menus.length,

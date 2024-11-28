@@ -33,6 +33,11 @@ dependencies:
   intl:
   provider:
   audioplayers:
+  path:
+  snippet_coder_utils:
+  firebase_core:
+  firebase_auth:
+  firebase_database:
   flutter:
     sdk: flutter
 

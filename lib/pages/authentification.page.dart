@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -25,7 +26,7 @@ class AuthentificationPage extends StatelessWidget {
                 controller: txt_login,
                 decoration: InputDecoration(
                     prefixIcon: Icon(Icons.person),
-                    hintText: "User",
+                    hintText: "Utilisateur",
                     border: OutlineInputBorder(
                       borderSide: BorderSide(width: 1),
                       borderRadius: BorderRadius.circular(10),
@@ -79,16 +80,18 @@ class AuthentificationPage extends StatelessWidget {
     );
   }
   Future<void> _onAuthentifier(BuildContext context) async {
-    prefs = await SharedPreferences.getInstance();
-    const snackBar = SnackBar(content: Text("Username ou mot de passe vides "),);
-    if ( !txt_login.text.isEmpty && !txt_password.text.isEmpty){
-      prefs.setString("login", txt_login.text);
-      prefs.setString("password", txt_password.text);
-      prefs.setBool("connecte", true);
+    try{
+      await FirebaseAuth.instance.signInWithEmailAndPassword(email: txt_login.text.trim(), password: txt_password.text.trim());
       Navigator.pop(context);
-      Navigator.pushNamed(context, '/home') ;
-    }
-    else {
+      Navigator.pushNamed(context, "/home");
+    } on FirebaseAuthException catch (e){
+      SnackBar snackBar = SnackBar(content: Text(""));
+      if(e.code == 'user-not-found'){
+        snackBar = SnackBar(content: Text("Utilisateur inextistant"));
+      }
+      else if(e.code == 'wrong-password'){
+        snackBar = SnackBar(content: Text("Verifier votre mot de passe"));
+      }
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
     }
   }

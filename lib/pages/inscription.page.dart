@@ -1,3 +1,5 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -65,19 +67,25 @@ class InscriptionPage extends StatelessWidget {
         )
     );
   }
-  Future<void> _onInscrire(BuildContext context) async {
-    prefs = await SharedPreferences.getInstance();
-    const snackBar = SnackBar(
-      content: Text("Username ou mot de passe vides "),
-    );
-    if ( !txt_login.text.isEmpty && !txt_password.text.isEmpty){
-      prefs.setString("login", txt_login.text);
-      prefs.setString("password", txt_password.text);
-      prefs.setBool("connecte", true);
-      Navigator.pop(context);
-      Navigator.pushNamed(context, '/authentification') ;
+  Future<void> _onInscrire(BuildContext context) async{
+    if(!txt_login.text.isEmpty && !txt_password.text.isEmpty){
+      try{
+        await FirebaseAuth.instance.createUserWithEmailAndPassword(email: txt_login.text.trim(), password: txt_password.text.trim());
+        Navigator.pop(context);
+        Navigator.pushNamed(context, "/home");
+      } on FirebaseAuthException catch(e){
+        SnackBar snackBar = SnackBar(content: Text(""));
+        if(e.code == 'weak-password'){
+          snackBar = SnackBar(content: Text("Mot de passe faible"),);
+        }
+        else if (e.code == 'email-already-in-use'){
+          snackBar = SnackBar(content: Text("Email dèjà existant"),);
+        }
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      }
     }
     else{
+      const snackBar = SnackBar(content: Text("Id ou mot de passe vides"));
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
     }
   }

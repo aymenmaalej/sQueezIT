@@ -1,3 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -8,8 +11,15 @@ import 'package:squeezit/pages/inscription.page.dart';
 import 'package:squeezit/pages/parametres.page.dart';
 import 'package:squeezit/pages/quiz.page.dart';
 import 'config/theme.provider.dart';
+import 'firebase_options.dart';
 
-void main() {
+
+final ref = FirebaseDatabase.instance.ref();
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  
   runApp(
     ChangeNotifierProvider(
       create: (_) => ThemeProvider()..loadTheme(),
@@ -18,7 +28,13 @@ void main() {
   );
 }
 
-class MyApp extends StatelessWidget {
+
+class MyApp extends StatefulWidget {
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
   final routes = {
     '/home': (context) => HomePage(),
     '/inscription': (context) => InscriptionPage(),
@@ -45,8 +61,17 @@ class MyApp extends StatelessWidget {
       theme: ThemeData.light(),
       darkTheme: ThemeData.dark(),
       themeMode: themeProvider.themeMode,
-      initialRoute: '/authentification',
       routes: routes,
+      home: StreamBuilder<User?>(
+        stream: FirebaseAuth.instance.authStateChanges(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return HomePage();
+          } else {
+            return AuthentificationPage();
+          }
+        },
+      ),
     );
   }
 }

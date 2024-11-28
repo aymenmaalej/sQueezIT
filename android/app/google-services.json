@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "237026644296",
+    "project_id": "squeezit-dsi34",
+    "storage_bucket": "squeezit-dsi34.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:237026644296:android:e08bf325e14e5625c9a37d",
+        "android_client_info": {
+          "package_name": "com.miniprojet"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCnY76NTWMyzE5yYZsVEG5yJsTM2U00NsI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
