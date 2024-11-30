@@ -57,7 +57,7 @@ class _ParametresPageState extends State<ParametresPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Quiz Settings"),
+        title: Text("Quiz Settings" , style: TextStyle(color: Colors.orange)),
       ),
       body: categories.isEmpty
           ? Center(child: CircularProgressIndicator())
@@ -115,6 +115,7 @@ class _ParametresPageState extends State<ParametresPage> {
                     Radio<int>(
                       value: value,
                       groupValue: numberOfQuestions,
+                      activeColor: Colors.orange,
                       onChanged: (newValue) {
                         setState(() {
                           numberOfQuestions = newValue;

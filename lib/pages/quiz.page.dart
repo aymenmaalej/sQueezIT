@@ -131,7 +131,7 @@ class _QuizPageState extends State<QuizPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Question ${currentQuestionIndex + 1}/${questions.length}"),
+        title: Text("Question ${currentQuestionIndex + 1}/${questions.length}", style: TextStyle(color: Colors.orange)),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -149,6 +149,7 @@ class _QuizPageState extends State<QuizPage> {
                 leading: Radio<String>(
                   value: answer,
                   groupValue: selectedAnswer,
+                  activeColor: Colors.orange,
                   onChanged: (value) {
                     setState(() {
                       selectedAnswer = value;
@@ -162,7 +163,7 @@ class _QuizPageState extends State<QuizPage> {
               onPressed: selectedAnswer != null
                   ? () => _answerQuestion(selectedAnswer!)
                   : null,
-              child: Text("Submit Answer"),
+              child: Text("Submit Answer", style: TextStyle(color: Colors.orange)),
             ),
           ],
         ),
