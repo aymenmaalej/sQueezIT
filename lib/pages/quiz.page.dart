@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:html/parser.dart' show parseFragment;
 
 class QuizPage extends StatefulWidget {
   final Map<String, dynamic> parameters;
@@ -37,24 +38,33 @@ class _QuizPageState extends State<QuizPage> {
     try {
       final response = await http.get(Uri.parse(url));
       if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        if (data['results'].isNotEmpty) {
-          setState(() {
-            questions = data['results'];
-            isLoading = false;
-          });
-        } else {
-          throw Exception("No questions available");
-        }
+        final results = json.decode(utf8.decode(response.bodyBytes))['results'];
+        setState(() {
+          questions = results.map((question) {
+            question['question'] = parseFragment(question['question']).text;
+            question['correct_answer'] = parseFragment(question['correct_answer']).text;
+            question['incorrect_answers'] = (question['incorrect_answers'] as List)
+                .map((answer) => parseFragment(answer).text)
+                .toList();
+            return question;
+          }).toList();
+          isLoading = false;
+          hasError = questions.isEmpty;
+        });
       } else {
-        throw Exception("Failed to load questions");
+        _handleError("Failed to load questions. Status code: ${response.statusCode}");
       }
     } catch (error) {
-      setState(() {
-        hasError = true;
-      });
-      print("Error fetching questions: $error");
+      _handleError("Error fetching questions: $error");
     }
+  }
+
+  void _handleError(String message) {
+    setState(() {
+      hasError = true;
+      isLoading = false;
+    });
+    print(message);
   }
 
   void _answerQuestion(String selectedAnswer) {
@@ -117,7 +127,7 @@ class _QuizPageState extends State<QuizPage> {
 
     final question = questions[currentQuestionIndex];
     final allAnswers = [...question['incorrect_answers'], question['correct_answer']];
-    allAnswers.shuffle();
+    //allAnswers.shuffle();
 
     return Scaffold(
       appBar: AppBar(

@@ -102,7 +102,8 @@ class _ParametresPageState extends State<ParametresPage> {
             SizedBox(height: 20),
             const Text(
               "Number Of Questions",
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold , color: Colors.orange
+              ),
             ),
             SizedBox(height: 10),
             Row(
