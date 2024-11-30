@@ -68,7 +68,20 @@ class _ParametresPageState extends State<ParametresPage> {
             DropdownButtonFormField<String>(
               decoration: InputDecoration(
                 labelText: "Category",
-                border: OutlineInputBorder(),
+                labelStyle: TextStyle(
+                  color: Colors.orange,
+                ),
+                border: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Colors.orange, 
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Colors.orange,
+                    width: 2.0,
+                  ),
+                ),
               ),
               items: categories.map((category) {
                 return DropdownMenuItem(
@@ -86,7 +99,20 @@ class _ParametresPageState extends State<ParametresPage> {
             DropdownButtonFormField<String>(
               decoration: InputDecoration(
                 labelText: "Difficulty",
-                border: OutlineInputBorder(),
+                labelStyle: TextStyle(
+                  color: Colors.orange, 
+                ),
+                border: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Colors.orange, 
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Colors.orange, 
+                    width: 2.0,  
+                  ),
+                ),
               ),
               items: [
                 DropdownMenuItem(value: "easy", child: Text("Easy")),
