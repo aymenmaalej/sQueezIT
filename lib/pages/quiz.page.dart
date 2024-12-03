@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart'; // Corrected import
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:html/parser.dart' show parseFragment;
@@ -42,17 +44,23 @@ class _QuizPageState extends State<QuizPage> {
         setState(() {
           questions = results.map((question) {
             question['question'] = parseFragment(question['question']).text;
-            question['correct_answer'] = parseFragment(question['correct_answer']).text;
+            question['correct_answer'] =
+                parseFragment(question['correct_answer']).text;
             question['incorrect_answers'] = (question['incorrect_answers'] as List)
                 .map((answer) => parseFragment(answer).text)
                 .toList();
+            question['shuffled_answers'] = [
+              ...question['incorrect_answers'],
+              question['correct_answer']
+            ]..shuffle();
             return question;
           }).toList();
           isLoading = false;
           hasError = questions.isEmpty;
         });
       } else {
-        _handleError("Failed to load questions. Status code: ${response.statusCode}");
+        _handleError(
+            "Failed to load questions. Status code: ${response.statusCode}");
       }
     } catch (error) {
       _handleError("Error fetching questions: $error");
@@ -86,6 +94,11 @@ class _QuizPageState extends State<QuizPage> {
   }
 
   void _showFinalScore() {
+    final user = FirebaseAuth.instance.currentUser;
+    String email = user?.email ?? "";
+    String username = email.split('@')[0].toUpperCase();
+    updateUserScore(username, score);
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -102,6 +115,26 @@ class _QuizPageState extends State<QuizPage> {
         ],
       ),
     );
+  }
+
+  Future<void> updateUserScore(String username, int score) async {
+    final leaderboardRef = FirebaseFirestore.instance.collection('leaderboard').doc(username);
+
+    try {
+      final doc = await leaderboardRef.get();
+      if (doc.exists) {
+        await leaderboardRef.update({
+          'totalScore': FieldValue.increment(score),
+        });
+      } else {
+        await leaderboardRef.set({
+          'username': username,
+          'totalScore': score,
+        });
+      }
+    } catch (e) {
+      print("Error updating leaderboard: $e");
+    }
   }
 
   @override
@@ -126,12 +159,14 @@ class _QuizPageState extends State<QuizPage> {
     }
 
     final question = questions[currentQuestionIndex];
-    final allAnswers = [...question['incorrect_answers'], question['correct_answer']];
-    //allAnswers.shuffle();
+    final allAnswers = question['shuffled_answers'];
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Question ${currentQuestionIndex + 1}/${questions.length}", style: TextStyle(color: Colors.orange)),
+        title: Text(
+          "Question ${currentQuestionIndex + 1}/${questions.length}",
+          style: TextStyle(color: Colors.orange),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
