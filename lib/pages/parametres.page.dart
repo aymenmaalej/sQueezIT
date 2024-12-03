@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:squeezit/menu/drawer.widget.dart';
 
 class ParametresPage extends StatefulWidget {
   @override
@@ -56,6 +57,7 @@ class _ParametresPageState extends State<ParametresPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: MyDrawer(),
       appBar: AppBar(
         title: Text("Quiz Settings" , style: TextStyle(color: Colors.orange)),
       ),

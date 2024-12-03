@@ -73,11 +73,11 @@ class HomePage extends StatelessWidget {
                   onPressed: () {
                     showAboutDialog(
                       context: context,
-                      applicationName: 'Quiz App',
+                      applicationName: 'sQueezIT',
                       applicationVersion: '1.0.0',
                       children: const [
                         Text(
-                          'This app allows you to play interactive quizzes on various topics. '
+                          'sQueezIT is a quiz application developped by Aymen Maalej for the end of semestre evalutaion. \n  '
                               'Questions are provided by the Open Trivia Database.',
                         ),
                       ],
