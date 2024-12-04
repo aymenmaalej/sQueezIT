@@ -40,6 +40,8 @@ dependencies:
   firebase_auth:
   firebase_database:
   cloud_firestore:
+  firebase_messaging:
+  flutter_local_notifications:
   flutter:
     sdk: flutter
 
