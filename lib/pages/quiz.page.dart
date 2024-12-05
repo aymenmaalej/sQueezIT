@@ -134,22 +134,41 @@ class _QuizPageState extends State<QuizPage> {
 
     showDialog(
       context: context,
-      builder: (context) =>
-          AlertDialog(
-            title: Text("Quiz Completed"),
-            content: Text("Your score is $score/${questions.length}."),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                  Navigator.pop(context);
-                },
-                child: Text("OK"),
-              ),
-            ],
+      builder: (context) => AlertDialog(
+        title: Text("Quiz Completed", style: TextStyle(color: Colors.orange)),
+        content: Text("Your score is $score/${questions.length}."),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              Navigator.pop(context);
+            },
+            child: Text("OK" , style: TextStyle(color: Colors.orange)),
           ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              _restartQuiz();
+            },
+            child: Text("Play Again", style: TextStyle(color: Colors.orange)),
+          ),
+        ],
+      ),
     );
   }
+  void _restartQuiz() {
+    setState(() {
+      currentQuestionIndex = 0;
+      score = 0;
+      selectedAnswer = null;
+      showAnswerFeedback = false;
+      isCorrectAnswer = false;
+      isLoading = false;
+      hasError = false;
+    });
+    _startTimer();
+  }
+
 
   Future<void> updateUserScore(String username, int score) async {
     final leaderboardRef = FirebaseFirestore.instance.collection('leaderboard')
@@ -217,14 +236,14 @@ class _QuizPageState extends State<QuizPage> {
   Widget build(BuildContext context) {
     if (isLoading) {
       return Scaffold(
-        appBar: AppBar(title: Text("Quiz")),
+        appBar: AppBar(title: Text("Quiz", style: TextStyle(color: Colors.orange) )),
         body: Center(child: CircularProgressIndicator()),
       );
     }
 
     if (hasError || questions.isEmpty) {
       return Scaffold(
-        appBar: AppBar(title: Text("Quiz")),
+        appBar: AppBar(title: Text("Quiz", style: TextStyle(color: Colors.orange))),
         body: Center(
           child: Text(
             "An error occurred or no questions are available. Please try again.",

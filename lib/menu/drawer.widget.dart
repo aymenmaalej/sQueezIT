@@ -2,9 +2,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:squeezit/config/languague.config.dart';
 import '../config/music.config.dart';
 import '../config/theme.provider.dart';
-import '../config/global.params.dart';
+import '../config/global.params.dart'; 
 
 class MyDrawer extends StatefulWidget {
   const MyDrawer({Key? key}) : super(key: key);
@@ -16,11 +17,31 @@ class MyDrawer extends StatefulWidget {
 class _MyDrawerState extends State<MyDrawer> {
   final BackgroundMusic _backgroundMusic = BackgroundMusic();
   bool isMusicPlaying = false;
+  String? _selectedLanguage;
+  final Map<String, String> _languageOptions = {
+    'en': 'English',
+    'fr': 'Français',
+    'ar': 'العربية',
+  };
 
   @override
   void initState() {
     super.initState();
     isMusicPlaying = _backgroundMusic.isMusicPlaying;
+    LanguageConfig.getSavedLanguage().then((savedLanguage) {
+      setState(() {
+        _selectedLanguage = savedLanguage;
+      });
+    });
+  }
+
+  void _changeLanguage(String newLang) async {
+    setState(() {
+      _selectedLanguage = newLang;
+    });
+
+    await LanguageConfig.saveLanguage(newLang);
+    Provider.of<LanguageNotifier>(context, listen: false).changeLanguage(newLang);
   }
 
   @override
@@ -29,6 +50,7 @@ class _MyDrawerState extends State<MyDrawer> {
     final user = FirebaseAuth.instance.currentUser;
     String email = user?.email ?? ""; 
     String username = email.split('@')[0].toUpperCase();
+
     return Drawer(
       child: Column(
         children: [
@@ -44,9 +66,9 @@ class _MyDrawerState extends State<MyDrawer> {
             ),
           ),
           Container(
-                      padding: EdgeInsets.all(10),
-                      child: Text("Hello! ${username}", style: TextStyle(fontSize: 22)),
-                    ),
+            padding: EdgeInsets.all(10),
+            child: Text("Hello! ${username}", style: TextStyle(fontSize: 22)),
+          ),
           Expanded(
             child: ListView.builder(
               itemCount: GlobalParams.menus.length,
@@ -79,6 +101,24 @@ class _MyDrawerState extends State<MyDrawer> {
                   ],
                 );
               },
+            ),
+          ),
+          ListTile(
+            leading: Icon(Icons.language , color: Colors.black),
+            title: Text('Language', style: TextStyle(fontSize: 22)),
+            trailing: DropdownButton<String>(
+              value: _selectedLanguage,
+              onChanged: (String? newLang) {
+                if (newLang != null) {
+                  _changeLanguage(newLang);
+                }
+              },
+              items: _languageOptions.entries.map((entry) {
+                return DropdownMenuItem(
+                  value: entry.key,
+                  child: Text(entry.value),
+                );
+              }).toList(),
             ),
           ),
           ListTile(
