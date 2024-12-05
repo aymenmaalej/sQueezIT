@@ -10,7 +10,13 @@ class ClassementPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Classement", style: TextStyle(color: Colors.orange)),
+        title: Text("Leaderboard", style: TextStyle(color: Colors.orange)),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.refresh),
+            onPressed: () => _resetScores(context), // Pass the context here
+          ),
+        ],
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: leaderboardRef.snapshots(),
@@ -35,8 +41,8 @@ class ClassementPage extends StatelessWidget {
             itemBuilder: (context, index) {
               final player = players[index].data() as Map<String, dynamic>;
               return ListTile(
-                leading: Text("#${index + 1}" , style: TextStyle(fontSize: 15)),
-                title: Text(player['username'] , style: TextStyle(color: Colors.orange)),
+                leading: Text("#${index + 1}", style: TextStyle(fontSize: 15)),
+                title: Text(player['username'], style: TextStyle(color: Colors.orange)),
                 trailing: Text(player['totalScore'].toString(), style: TextStyle(fontSize: 15)),
               );
             },
@@ -44,5 +50,25 @@ class ClassementPage extends StatelessWidget {
         },
       ),
     );
+  }
+
+  Future<void> _resetScores(BuildContext context) async {
+    final leaderboardRef = FirebaseFirestore.instance.collection('leaderboard');
+    final batch = FirebaseFirestore.instance.batch();
+
+    try {
+      final snapshot = await leaderboardRef.get();
+      for (var doc in snapshot.docs) {
+        batch.update(doc.reference, {'totalScore': 0});
+      }
+      await batch.commit();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Scores reset successfully!")),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Failed to reset scores: $e")),
+      );
+    }
   }
 }

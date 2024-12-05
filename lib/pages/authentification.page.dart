@@ -26,7 +26,7 @@ class AuthentificationPage extends StatelessWidget {
                 controller: txt_login,
                 decoration: InputDecoration(
                     prefixIcon: Icon(Icons.person),
-                    hintText: "Utilisateur",
+                    hintText: "Username",
                     border: OutlineInputBorder(
                       borderSide: BorderSide(width: 1),
                       borderRadius: BorderRadius.circular(10),
@@ -80,19 +80,38 @@ class AuthentificationPage extends StatelessWidget {
     );
   }
   Future<void> _onAuthentifier(BuildContext context) async {
-    try{
-      await FirebaseAuth.instance.signInWithEmailAndPassword(email: txt_login.text.trim(), password: txt_password.text.trim());
+    if (txt_login.text.trim().isEmpty || txt_password.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Username and Password fields cannot be empty.")),
+      );
+      return;
+    }
+
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: txt_login.text.trim(),
+        password: txt_password.text.trim(),
+      );
       Navigator.pop(context);
       Navigator.pushNamed(context, "/home");
-    } on FirebaseAuthException catch (e){
-      SnackBar snackBar = SnackBar(content: Text(""));
-      if(e.code == 'user-not-found'){
-        snackBar = SnackBar(content: Text("Utilisateur inextistant"));
+    } on FirebaseAuthException catch (e) {
+      String errorMessage;
+      if (e.code == 'user-not-found') {
+        errorMessage = "User not found! Please register first.";
+      } else if (e.code == 'wrong-password') {
+        errorMessage = "Incorrect password! Please try again.";
+      } else {
+        errorMessage = "An error occurred: ${e.message}";
       }
-      else if(e.code == 'wrong-password'){
-        snackBar = SnackBar(content: Text("Verifier votre mot de passe"));
-      }
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(errorMessage)),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Unexpected error: ${e.toString()}")),
+      );
     }
   }
+
 }
